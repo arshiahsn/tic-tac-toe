@@ -17,13 +17,21 @@ class Board extends React.Component {
 
   handleClick(i) {
     const squares = this.state.squares.slice();
-    if (calculateWinner(squares) || squares[i]){
+    if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? 'X':'O';
-    this.setState({squares: squares,
-                   xIsNext: !this.state.xIsNext,
-                  });
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      squares: squares,
+      xIsNext: !this.state.xIsNext,
+    });
+  }
+  
+  handleRestart() {
+    this.state = {
+      squares: Array(9).fill(null),
+      xIsNext: true,
+    };
     
   }
 
@@ -35,18 +43,22 @@ class Board extends React.Component {
       />
     );
   }
+  
+  renderResButton(){
+    return (
+    <button onClick={() => this.handleRestart()}>Restart</button>
+    );
+  }
 
   render() {
+    const winner = calculateWinner(this.state.squares);
     let status;
-    const winStatus = calculateWinner(this.state.squares);
-    if(winStatus){
-      status = 'The winner is: ' + winStatus;
-    }
-    else{
-      status = 'Next player: '+ (this.state.xIsNext ? 'X':'O');
+    if (winner) {
+      status = 'Winner: ' + winner;
+    } else {
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
-    
     return (
       <div>
         <div className="status">{status}</div>
@@ -64,6 +76,9 @@ class Board extends React.Component {
           {this.renderSquare(6)}
           {this.renderSquare(7)}
           {this.renderSquare(8)}
+        </div>
+        <div>
+          {this.renderResButton()}
         </div>
       </div>
     );
@@ -93,7 +108,6 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -113,3 +127,4 @@ function calculateWinner(squares) {
   }
   return null;
 }
+
